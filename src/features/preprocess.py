@@ -1,3 +1,5 @@
+"""Feature preprocessing builders for numeric and categorical model inputs."""
+
 from __future__ import annotations
 
 import pandas as pd

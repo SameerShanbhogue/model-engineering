@@ -1,3 +1,5 @@
+"""Evaluate a saved run on its holdout set and write evaluation metrics."""
+
 from __future__ import annotations
 
 import argparse

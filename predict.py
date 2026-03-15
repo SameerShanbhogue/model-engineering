@@ -1,3 +1,5 @@
+"""Run batch inference with a saved model and export predictions to CSV."""
+
 from __future__ import annotations
 
 import argparse

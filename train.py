@@ -1,3 +1,5 @@
+"""Train a baseline classification pipeline and save run artifacts for reproducibility."""
+
 from __future__ import annotations
 
 import argparse

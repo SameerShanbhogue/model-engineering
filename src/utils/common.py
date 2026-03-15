@@ -1,3 +1,5 @@
+"""Shared utility helpers for randomness control, YAML loading, and filesystem setup."""
+
 import os
 import random
 from pathlib import Path

@@ -1,3 +1,5 @@
+"""Model training routines that build and fit sklearn pipelines."""
+
 from __future__ import annotations
 
 import pandas as pd

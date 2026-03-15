@@ -1,3 +1,5 @@
+"""Inference helpers for loading trained models and producing prediction tables."""
+
 from __future__ import annotations
 
 from pathlib import Path

@@ -1,3 +1,5 @@
+"""Perform a lightweight end-to-end sanity check of training artifacts and inference."""
+
 from __future__ import annotations
 
 import subprocess
