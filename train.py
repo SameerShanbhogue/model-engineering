@@ -8,12 +8,47 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import load_breast_cancer, load_iris, load_wine, make_classification
 from sklearn.model_selection import train_test_split
 
 from src.eval.metrics import classification_metrics
 from src.models.trainer import train_logistic_regression
 from src.utils.common import ensure_dir, load_yaml, set_seed
+
+
+def _bootstrap_dataframe(name: str) -> pd.DataFrame:
+    """Load a binary-classification DataFrame from a named sklearn dataset."""
+    if name == "breast_cancer":
+        data = load_breast_cancer(as_frame=True)
+        return data.frame.copy()
+
+    if name == "wine":
+        # wine has 3 classes; binarise: class 0 → 1, classes 1/2 → 0.
+        data = load_wine(as_frame=True)
+        df = data.frame.copy()
+        df["target"] = (df["target"] == 0).astype(int)
+        return df
+
+    if name == "iris":
+        # iris has 3 classes; keep only setosa (0) vs versicolor (1).
+        data = load_iris(as_frame=True)
+        df = data.frame.copy()
+        df = df[df["target"].isin([0, 1])].reset_index(drop=True)
+        return df
+
+    if name == "synthetic":
+        X, y = make_classification(
+            n_samples=500, n_features=20, n_informative=10,
+            n_redundant=5, random_state=42
+        )
+        df = pd.DataFrame(X, columns=[f"feature_{i}" for i in range(X.shape[1])])
+        df["target"] = y
+        return df
+
+    raise ValueError(
+        f"Unknown bootstrap_dataset '{name}'. "
+        "Choose from: breast_cancer, wine, iris, synthetic."
+    )
 
 
 def _ensure_training_data(data_cfg: dict) -> pd.DataFrame:
@@ -23,8 +58,8 @@ def _ensure_training_data(data_cfg: dict) -> pd.DataFrame:
 
     # Bootstrap a local demo dataset so the training workflow runs out-of-the-box.
     dataset_path.parent.mkdir(parents=True, exist_ok=True)
-    data = load_breast_cancer(as_frame=True)
-    df = data.frame.copy()
+    bootstrap = data_cfg.get("bootstrap_dataset", "breast_cancer")
+    df = _bootstrap_dataframe(bootstrap)
     df.rename(columns={"target": data_cfg["target_column"]}, inplace=True)
     df.to_csv(dataset_path, index=False)
     return df
