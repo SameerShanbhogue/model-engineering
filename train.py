@@ -97,6 +97,8 @@ def main() -> None:
         y_train=y_train,
         model_params=model_cfg.get("params", {}),
         scale_numeric=bool(feature_cfg.get("scale_numeric", True)),
+        pca_enabled=bool(feature_cfg.get("pca_enabled", False)),
+        pca_n_components=feature_cfg.get("pca_n_components"),
     )
 
     y_pred = model.predict(X_test)

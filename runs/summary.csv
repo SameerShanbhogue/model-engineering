@@ -1,1 +1,7 @@
 run_name,model,accuracy,f1,roc_auc,notes
+run_demo_all_features,logistic_regression,0.9066666666666666,0.906040268456376,0.9733777777777778,baseline run
+run_demo_selected_features,logistic_regression,0.92,0.9205298013245032,0.9704888888888888,baseline run
+run_demo_pca_features,logistic_regression,0.9166666666666666,0.9169435215946844,0.9680444444444444,baseline run
+run_titanic_all,logistic_regression,0.74,0.6976744186046512,0.7916666666666667,baseline run
+run_titanic_selected,logistic_regression,0.74,0.7111111111111111,0.7996794871794872,baseline run
+run_titanic_pca,logistic_regression,0.62,0.5581395348837209,0.6089743589743589,baseline run
