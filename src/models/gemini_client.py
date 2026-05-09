@@ -67,7 +67,7 @@ class GeminiClient:
             max_tokens: Maximum response length
             safety_settings: Safety configuration dict
         """
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY") or self._load_api_key_from_dotenv()
         if not self.api_key:
             raise ValueError(
                 "GEMINI_API_KEY not provided and not set in environment. "
@@ -78,6 +78,23 @@ class GeminiClient:
         self.model_name = model_name
         self.temperature = temperature
         self.max_tokens = max_tokens
+
+    @staticmethod
+    def _load_api_key_from_dotenv() -> str | None:
+        """Load GEMINI_API_KEY from project-level .env file when available."""
+        # Project root is two levels above this file: src/models/gemini_client.py
+        dotenv_path = Path(__file__).resolve().parents[2] / ".env"
+        if not dotenv_path.exists():
+            return None
+
+        for line in dotenv_path.read_text(encoding="utf-8").splitlines():
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            if stripped.startswith("GEMINI_API_KEY="):
+                value = stripped.split("=", 1)[1].strip().strip('"').strip("'")
+                return value or None
+        return None
 
     @staticmethod
     def _default_safety_settings() -> dict:

@@ -32,6 +32,22 @@ from src.models.gemini_client import GeminiClient
 from src.utils.common import ensure_dir, load_yaml
 
 
+def load_api_key_from_dotenv(env_name: str) -> str | None:
+    """Load API key from project-level .env file when available."""
+    dotenv_path = Path(__file__).resolve().parent / ".env"
+    if not dotenv_path.exists():
+        return None
+
+    for line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped.startswith(f"{env_name}="):
+            value = stripped.split("=", 1)[1].strip().strip('"').strip("'")
+            return value or None
+    return None
+
+
 def main() -> None:
     """Main entry point for LLM demonstration."""
     parser = argparse.ArgumentParser(
@@ -85,10 +101,12 @@ Examples:
         run_name = f"{task_name}_{timestamp}"
 
     # Initialize Gemini client
-    api_key = os.getenv(llm_cfg["paths"]["api_key_env"])
+    env_name = llm_cfg["paths"]["api_key_env"]
+    api_key = os.getenv(env_name) or load_api_key_from_dotenv(env_name)
     if not api_key:
         print(
-            f"ERROR: {llm_cfg['paths']['api_key_env']} environment variable not set.\n"
+            f"ERROR: {env_name} environment variable not set.\n"
+            f"Tip: set {env_name} in your shell or add it to a local .env file.\n"
             "Get free key at: https://ai.google.dev/"
         )
         sys.exit(1)
